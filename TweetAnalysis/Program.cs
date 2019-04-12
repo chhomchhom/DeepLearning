@@ -20,6 +20,18 @@ namespace TweetAnalysis
             TrainCatalogBase.TrainTestData splitDataView = LoadData(mlContext);
             ITransformer model = BuildAndTrainModel(mlContext, splitDataView.TrainSet);
             Evaluate(mlContext, model, splitDataView.TestSet);
+            // </SnippetCallEvaluate>
+
+            // <SnippetCallUseModelWithSingleItem>
+            UseModelWithSingleItem(mlContext, model);
+            // </SnippetCallUseModelWithSingleItem>
+
+            // <SnippetCallUseLoadedModelWithBatchItems>
+            UseLoadedModelWithBatchItems(mlContext);
+            // </SnippetCallUseLoadedModelWithBatchItems>
+
+            Console.WriteLine();
+            Console.WriteLine("=============== End of process ===============");
         }
 
 
@@ -57,7 +69,7 @@ namespace TweetAnalysis
         }
         private static void UseModelWithSingleItem(MLContext mlContext, ITransformer model)
         {
-            UseModelWithSingleItem(mlContext, model);
+            //UseModelWithSingleItem(mlContext, model);
             PredictionEngine<SentimentData, SentimentPrediction> predictionFunction = model.CreatePredictionEngine<SentimentData, SentimentPrediction>(mlContext);
             SentimentData sampleStatement = new SentimentData
             {
@@ -76,7 +88,7 @@ namespace TweetAnalysis
 
         public static void UseLoadedModelWithBatchItems(MLContext mlContext)
         {
-            UseLoadedModelWithBatchItems(mlContext);
+            //UseLoadedModelWithBatchItems(mlContext);
             IEnumerable<SentimentData> sentiments = new[]
             {
                 new SentimentData
