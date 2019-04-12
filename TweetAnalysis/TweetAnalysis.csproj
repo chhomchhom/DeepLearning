@@ -5,4 +5,34 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="obj\Debug\netcoreapp2.1\TweetAnalysis.AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Debug\netcoreapp2.1\TweetAnalysis.deps.json" />
+    <Content Include="bin\Debug\netcoreapp2.1\TweetAnalysis.runtimeconfig.dev.json" />
+    <Content Include="bin\Debug\netcoreapp2.1\TweetAnalysis.runtimeconfig.json" />
+    <Content Include="obj\project.assets.json" />
+    <Content Include="obj\TweetAnalysis.csproj.nuget.dgspec.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Debug\netcoreapp2.1\Data\Model.zip" />
+    <None Include="bin\Debug\netcoreapp2.1\Data\yelp_labelled.txt" />
+    <None Include="bin\Debug\netcoreapp2.1\TweetAnalysis.dll" />
+    <None Include="bin\Debug\netcoreapp2.1\TweetAnalysis.pdb" />
+    <None Include="obj\Debug\netcoreapp2.1\TweetAnalysis.AssemblyInfoInputs.cache" />
+    <None Include="obj\Debug\netcoreapp2.1\TweetAnalysis.assets.cache" />
+    <None Include="obj\Debug\netcoreapp2.1\TweetAnalysis.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\netcoreapp2.1\TweetAnalysis.csprojAssemblyReference.cache" />
+    <None Include="obj\TweetAnalysis.csproj.nuget.cache" />
+    <None Include="obj\TweetAnalysis.csproj.nuget.g.props" />
+    <None Include="obj\TweetAnalysis.csproj.nuget.g.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML" Version="0.11.0" />
+  </ItemGroup>
+
 </Project>
