@@ -32,11 +32,6 @@ namespace TweetAnalysis
             //trainedModel = Train(trainedModel, mlContext, splitDataViewAmazon.TrainSet);
             Console.WriteLine("Evaluate on Yelp dataset");
             Evaluate(trainedModel, mlContext, splitDataViewYelp.TestSet);
-            // </SnippetCallEvaluate>
-
-            // <SnippetCallUseModelWithSingleItem>
-           // UseModelWithSingleItem(mlContext, model);
-            // </SnippetCallUseModelWithSingleItem>
 
             // <SnippetCallUseLoadedModelWithBatchItems>
             UseLoadedModelWithBatchItems(mlContext);
@@ -61,6 +56,7 @@ namespace TweetAnalysis
         {
             var pipeline = mlContext.Transforms.Text.FeaturizeText(outputColumnName: DefaultColumnNames.Features, inputColumnName: nameof(SentimentData.SentimentText))
                 .Append(mlContext.BinaryClassification.Trainers.FastTree(numLeaves: 100, numTrees: 30, minDatapointsInLeaves: 10));
+               // .Append(mlContext.BinaryClassification.Trainers.FastTree(numLeaves: 100, numTrees: 30, minDatapointsInLeaves: 10));
             model = pipeline.Fit(splitTrainSet);
             SaveModelAsFile(mlContext, model);
             return model;
