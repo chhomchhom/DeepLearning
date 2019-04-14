@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="bin\Debug\netcoreapp2.1\Data\yelp_labelled2.txt" />
     <Content Include="bin\Debug\netcoreapp2.1\TweetAnalysis.deps.json" />
     <Content Include="bin\Debug\netcoreapp2.1\TweetAnalysis.runtimeconfig.dev.json" />
     <Content Include="bin\Debug\netcoreapp2.1\TweetAnalysis.runtimeconfig.json" />
@@ -33,6 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ML" Version="0.11.0" />
+    <PackageReference Include="Microsoft.ML.TensorFlow" Version="0.11.0" />
   </ItemGroup>
 
 </Project>

@@ -8,22 +8,34 @@ using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using Microsoft.ML.Transforms.Text;
 
+
 namespace TweetAnalysis
 {
     class Program
     {
-        static readonly string _dataPath = Path.Combine(Environment.CurrentDirectory, "Data", "yelp_labelled.txt");
+        static readonly string _dataPathYelp = Path.Combine(Environment.CurrentDirectory, "Data", "yelp_labelled.txt");
+        static readonly string _dataPathIMDB = Path.Combine(Environment.CurrentDirectory, "Data", "imdb_labelled.txt");
+        static readonly string _dataPathAmazon = Path.Combine(Environment.CurrentDirectory, "Data", "amazon_cells_labelled.txt");
         static readonly string _modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "Model.zip");
+        static readonly string _inputImageClassifierZip = Path.Combine(Environment.CurrentDirectory, "Data", "Model.zip");
+       
+
         static void Main(string[] args)
         {
             MLContext mlContext = new MLContext();
-            TrainCatalogBase.TrainTestData splitDataView = LoadData(mlContext);
-            ITransformer model = BuildAndTrainModel(mlContext, splitDataView.TrainSet);
-            Evaluate(mlContext, model, splitDataView.TestSet);
+            TrainCatalogBase.TrainTestData splitDataViewYelp = LoadData(mlContext, _dataPathYelp);
+            TrainCatalogBase.TrainTestData splitDataViewIMDB = LoadData(mlContext, _dataPathIMDB);
+            TrainCatalogBase.TrainTestData splitDataViewAmazon = LoadData(mlContext, _dataPathAmazon);
+            ITransformer model = LoadOldModel(mlContext);
+            ITransformer trainedModel = Train(model, mlContext, splitDataViewYelp.TrainSet);
+            //trainedModel = Train(trainedModel, mlContext, splitDataViewIMDB.TrainSet);
+            //trainedModel = Train(trainedModel, mlContext, splitDataViewAmazon.TrainSet);
+            Console.WriteLine("Evaluate on Yelp dataset");
+            Evaluate(trainedModel, mlContext, splitDataViewYelp.TestSet);
             // </SnippetCallEvaluate>
 
             // <SnippetCallUseModelWithSingleItem>
-            UseModelWithSingleItem(mlContext, model);
+           // UseModelWithSingleItem(mlContext, model);
             // </SnippetCallUseModelWithSingleItem>
 
             // <SnippetCallUseLoadedModelWithBatchItems>
@@ -35,17 +47,37 @@ namespace TweetAnalysis
         }
 
 
-        public static TrainCatalogBase.TrainTestData LoadData(MLContext mlContext)
+        public static ITransformer LoadOldModel(MLContext mlContext)
+        {
+            ITransformer loadedModel;
+            using (var fileStream = new FileStream(_modelPath, FileMode.Open))
+                loadedModel = mlContext.Model.Load(fileStream);
+
+            return loadedModel;
+
+        }
+
+        public static ITransformer Train(ITransformer model,MLContext mlContext, IDataView splitTrainSet)
+        {
+            var pipeline = mlContext.Transforms.Text.FeaturizeText(outputColumnName: DefaultColumnNames.Features, inputColumnName: nameof(SentimentData.SentimentText))
+                .Append(mlContext.BinaryClassification.Trainers.FastTree(numLeaves: 100, numTrees: 30, minDatapointsInLeaves: 10));
+            model = pipeline.Fit(splitTrainSet);
+            SaveModelAsFile(mlContext, model);
+            return model;
+        }
+
+        public static TrainCatalogBase.TrainTestData LoadData(MLContext mlContext, String _dataPath)
         {
             IDataView dataView = mlContext.Data.LoadFromTextFile<SentimentData>(_dataPath, hasHeader: false);
             TrainCatalogBase.TrainTestData splitDataView = mlContext.BinaryClassification.TrainTestSplit(dataView, testFraction: 0.2);
             return splitDataView;
         }
 
+
         public static ITransformer BuildAndTrainModel(MLContext mlContext, IDataView splitTrainSet)
         {
             var pipeline = mlContext.Transforms.Text.FeaturizeText(outputColumnName: DefaultColumnNames.Features, inputColumnName: nameof(SentimentData.SentimentText))
-                .Append(mlContext.BinaryClassification.Trainers.FastTree(numLeaves: 50, numTrees: 50, minDatapointsInLeaves: 20));
+                .Append(mlContext.BinaryClassification.Trainers.FastTree(numLeaves: 100, numTrees: 30, minDatapointsInLeaves: 10));
             Console.WriteLine("=============== Create and Train the Model ===============");
             var model = pipeline.Fit(splitTrainSet);
             Console.WriteLine("=============== End of training ===============");
@@ -53,7 +85,8 @@ namespace TweetAnalysis
             return model;
 
         }
-        public static void Evaluate(MLContext mlContext, ITransformer model, IDataView splitTestSet)
+
+        public static void Evaluate(ITransformer model,MLContext mlContext,IDataView splitTestSet)
         {
             Console.WriteLine("=============== Evaluating Model accuracy with Test data===============");
             IDataView predictions = model.Transform(splitTestSet);
@@ -121,6 +154,7 @@ namespace TweetAnalysis
 
             }
             Console.WriteLine("=============== End of predictions ===============");
+            SaveModelAsFile(mlContext, loadedModel);
         }
 
         private static void SaveModelAsFile(MLContext mlContext, ITransformer model)
