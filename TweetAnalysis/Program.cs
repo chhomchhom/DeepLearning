@@ -17,6 +17,9 @@ namespace TweetAnalysis
         static readonly string _dataPathIMDB = Path.Combine(Environment.CurrentDirectory, "Data", "imdb_labelled.txt");
         static readonly string _dataPathAmazon = Path.Combine(Environment.CurrentDirectory, "Data", "amazon_cells_labelled.txt");
         static readonly string _modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "Model.zip");
+        static readonly string _tweetsPath = Path.Combine(Environment.CurrentDirectory, "Data", "tweets.txt");
+        static readonly string _resultsPath = Path.Combine(Environment.CurrentDirectory, "Data", "results.txt");
+
         static readonly string _inputImageClassifierZip = Path.Combine(Environment.CurrentDirectory, "Data", "Model.zip");
        
 
@@ -117,18 +120,19 @@ namespace TweetAnalysis
 
         public static void UseLoadedModelWithBatchItems(MLContext mlContext)
         {
-            //UseLoadedModelWithBatchItems(mlContext);
-            IEnumerable<SentimentData> sentiments = new[]
+            string[] myWholeFile = File.ReadAllLines(_tweetsPath);
+            List<SentimentData> myList = new List<SentimentData>();
+            int currentIndex = 0;
+            while (currentIndex < myWholeFile.Length)
             {
-                new SentimentData
+                myList.Add(new SentimentData
                 {
-                    SentimentText = "This was a horrible meal"
-                },
-                new SentimentData
-                {
-                    SentimentText = "I love this spaghetti."
-                }
-            };
+                    SentimentText = myWholeFile[currentIndex].ToString()
+                });
+                currentIndex++;
+            }
+            IEnumerable<SentimentData> sentiments = myList;
+
             ITransformer loadedModel;
             using (var stream = new FileStream(_modelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
@@ -144,10 +148,13 @@ namespace TweetAnalysis
 
             Console.WriteLine("=============== Prediction Test of loaded model with a multiple samples ===============");
             IEnumerable<(SentimentData sentiment, SentimentPrediction prediction)> sentimentsAndPredictions = sentiments.Zip(predictedResults, (sentiment, prediction) => (sentiment, prediction));
+            string[] myShit;
             foreach ((SentimentData sentiment, SentimentPrediction prediction) item in sentimentsAndPredictions)
             {
-                Console.WriteLine($"Sentiment: {item.sentiment.SentimentText} | Prediction: {(Convert.ToBoolean(item.prediction.Prediction) ? "Positive" : "Negative")} | Probability: {item.prediction.Probability} ");
-
+                string results = $"Sentiment: {item.sentiment.SentimentText} | Prediction: {(Convert.ToBoolean(item.prediction.Prediction) ? "Positive" : "Negative")} | Probability: {item.prediction.Probability} \n";
+                Console.WriteLine(results);
+                
+                File.AppendAllText(_resultsPath, results);
             }
             Console.WriteLine("=============== End of predictions ===============");
             SaveModelAsFile(mlContext, loadedModel);

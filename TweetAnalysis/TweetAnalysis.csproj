@@ -10,6 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="bin\Debug\netcoreapp2.1\Data\amazon_cells_labelled.txt" />
+    <Content Include="bin\Debug\netcoreapp2.1\Data\imdb_labelled.txt" />
+    <Content Include="bin\Debug\netcoreapp2.1\Data\results.txt" />
+    <Content Include="bin\Debug\netcoreapp2.1\Data\tweets.txt" />
     <Content Include="bin\Debug\netcoreapp2.1\Data\yelp_labelled2.txt" />
     <Content Include="bin\Debug\netcoreapp2.1\TweetAnalysis.deps.json" />
     <Content Include="bin\Debug\netcoreapp2.1\TweetAnalysis.runtimeconfig.dev.json" />
