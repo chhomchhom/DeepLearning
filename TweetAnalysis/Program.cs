@@ -18,7 +18,7 @@ namespace TweetAnalysis
         static readonly string _dataPathAmazon = Path.Combine(Environment.CurrentDirectory, "Data", "amazon_cells_labelled.txt");
         static readonly string _modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "Model.zip");
         static readonly string _tweetsPath = Path.Combine(Environment.CurrentDirectory, "Data", "tweets.txt");
-        static readonly string _resultsPath = Path.Combine(Environment.CurrentDirectory, "Data", "results.txt");
+        static readonly string _resultsPath = Path.Combine(Environment.CurrentDirectory, "Data", "results.txt" + DateTime.Now.ToString("yyyyMMddHHmmssfff"));
 
         static readonly string _inputImageClassifierZip = Path.Combine(Environment.CurrentDirectory, "Data", "Model.zip");
        
@@ -148,12 +148,10 @@ namespace TweetAnalysis
 
             Console.WriteLine("=============== Prediction Test of loaded model with a multiple samples ===============");
             IEnumerable<(SentimentData sentiment, SentimentPrediction prediction)> sentimentsAndPredictions = sentiments.Zip(predictedResults, (sentiment, prediction) => (sentiment, prediction));
-            string[] myShit;
-            foreach ((SentimentData sentiment, SentimentPrediction prediction) item in sentimentsAndPredictions)
+            foreach ((SentimentData sentiment, SentimentPrediction prediction) in sentimentsAndPredictions)
             {
-                string results = $"Sentiment: {item.sentiment.SentimentText} | Prediction: {(Convert.ToBoolean(item.prediction.Prediction) ? "Positive" : "Negative")} | Probability: {item.prediction.Probability} \n";
+                string results = $" Prediction: {(Convert.ToBoolean(prediction.Prediction) ? "Positive" : "Negative")} | Probability: {String.Format("{0:N7}",prediction.Probability)} | Sentiment: {sentiment.SentimentText} \n";
                 Console.WriteLine(results);
-                
                 File.AppendAllText(_resultsPath, results);
             }
             Console.WriteLine("=============== End of predictions ===============");
