@@ -29,12 +29,13 @@ namespace TweetAnalysis
             TrainCatalogBase.TrainTestData splitDataViewYelp = LoadData(mlContext, _dataPathYelp);
             TrainCatalogBase.TrainTestData splitDataViewIMDB = LoadData(mlContext, _dataPathIMDB);
             TrainCatalogBase.TrainTestData splitDataViewAmazon = LoadData(mlContext, _dataPathAmazon);
+            TrainCatalogBase.TrainTestData splitDataViewTweets = LoadData(mlContext, _tweetsPath);
             ITransformer model = LoadOldModel(mlContext);
             //ITransformer trainedModel = Train(model, mlContext, splitDataViewYelp.TrainSet);
             //trainedModel = Train(trainedModel, mlContext, splitDataViewIMDB.TrainSet);
             //trainedModel = Train(trainedModel, mlContext, splitDataViewAmazon.TrainSet);
-            Console.WriteLine("Evaluate on Yelp dataset");
-            Evaluate(model, mlContext, splitDataViewYelp.TestSet);
+            Console.WriteLine("Evaluate on Tweets dataset");
+            Evaluate(model, mlContext, splitDataViewTweets.TestSet);
 
             // <SnippetCallUseLoadedModelWithBatchItems>
             UseLoadedModelWithBatchItems(mlContext);
